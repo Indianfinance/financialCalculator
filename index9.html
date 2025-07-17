@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Financial Calculators by [Your Name]</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Montserrat', 'Roboto', Arial, sans-serif;
+      background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(90deg,#10cfc9,#2494e2);
+      color: #fff; text-align: center; padding: 38px 0 22px 0;border-radius: 0 0 44px 44px;
+      box-shadow: 0 3px 20px rgba(20,60,80,0.08);
+      margin-bottom: 24px;
+    }
+    main { max-width: 950px; margin: 0 auto; padding: 10px;}
+    h1 { font-size: 2.5rem; margin: 0; letter-spacing: 1px;}
+    nav { margin-bottom: 32px; text-align:center;}
+    nav a {
+      background:#fff; color:#1C7BA0; text-decoration: none; margin: 3px 7px;
+      font-weight: bold; display:inline-block; padding:8px 20px; border-radius:22px; font-size:1em;
+      transition: all .13s; border:1px solid #e7e7e7;
+    }
+    nav a.active, nav a:hover {
+      background:linear-gradient(90deg,#10cfc9,#2494e2);color:#fff;
+    }
+    .calculator {
+      background: #fff; border-radius: 17px;
+      box-shadow: 0 4px 18px rgba(4,52,70,.09);
+      margin-bottom: 38px; padding: 36px 24px 34px 24px;
+      max-width:560px; margin-left:auto; margin-right:auto;
+      position:relative;
+    }
+    .calculator h2 {
+      color:#03a9f4; margin-top:0;margin-bottom:16px;letter-spacing:0.5px;
+      font-size:1.18em;
+    }
+    .calculator label { display: block; margin: 6px 0 2px 2px;font-size:.99em;}
+    .calculator input, .calculator select {
+      width: 100%; padding: 10px; margin-bottom: 13px;
+      border: 1px solid #d0ecfc;
+      border-radius: 4px;font-size: 1.1em; background: #f6fcff
+    }
+    .btn {
+      background: linear-gradient(90deg,#10cfc9,#2494e2);
+      color: #fff; font-weight: 700; border: none; padding: 12px 28px;
+      border-radius: 22px; cursor: pointer; transition:.14s;
+      font-size:1.03em; margin-top:3px;
+    }
+    .btn:hover {opacity:.91; letter-spacing:0.3px;}
+    .result {
+      font-size: 1.15em; font-weight: bold; color: #2494e2; margin-top: 16px; margin-bottom:6px;
+    }
+    canvas {margin-top:16px;}
+    footer {
+      text-align: center; color: #888; padding: 18px 0 8px 0; margin-top:36px;
+      background:rgba(255,255,255,.23);font-size:.97em;
+    }
+    @media(max-width:700px){
+      main{padding:2px;}
+      .calculator{padding:17px 7px;}
+      nav a{padding:6px 8px;font-size:.97em;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Financial Calculators</h1>
+    <div style="font-size:1.13em;">
+      SIP · EMI · Compound Interest · Home Buy vs SIP · Car Loan & More
+    </div>
+  </header>
+  <main>
+    <nav>
+      <a href="#" onclick="switchTab('sip-calculator',this);return false;" class="active">SIP Calculator</a>
+      <a href="#" onclick="switchTab('emi-calculator',this);return false;">EMI Calculator</a>
+      <a href="#" onclick="switchTab('ci-calculator',this);return false;">Compound Interest</a>
+      <a href="#" onclick="switchTab('home-sip-calculator',this);return false;">Home Loan vs SIP</a>
+      <a href="#" onclick="switchTab('car-sip-calculator',this);return false;">Car Loan vs SIP</a>
+      <a href="#" onclick="switchTab('smart-carloan',this);return false;">Smart Car Loan Payoff</a>
+    </nav>
+
+    <!-- SIP Calculator -->
+    <div class="calculator" id="sip-calculator">
+      <h2>SIP Calculator</h2>
+      <label>Monthly Investment (₹)
+        <input type="number" id="sip-amount" min="0" value="5000">
+      </label>
+      <label>Expected Annual Return (%)
+        <input type="number" id="sip-rate" min="0" value="12">
+      </label>
+      <label>Investment Duration (Years)
+        <input type="number" id="sip-years" min="1" value="10">
+      </label>
+      <button class="btn" onclick="calculateSIP()">Calculate</button>
+      <div class="result" id="sip-result"></div>
+      <canvas id="sip-chart" height="110"></canvas>
+    </div>
+
+    <!-- EMI Calculator -->
+    <div class="calculator" id="emi-calculator" style="display:none;">
+      <h2>EMI Calculator</h2>
+      <label>Loan Amount (₹)
+        <input type="number" id="emi-principal" min="0" value="500000">
+      </label>
+      <label>Annual Interest Rate (%)
+        <input type="number" id="emi-rate" min="0" value="9">
+      </label>
+      <label>Loan Tenure (Years)
+        <input type="number" id="emi-years" min="1" value="5">
+      </label>
+      <button class="btn" onclick="calculateEMI()">Calculate</button>
+      <div class="result" id="emi-result"></div>
+      <canvas id="emi-chart" height="110"></canvas>
+    </div>
+
+    <!-- Compound Interest Calculator -->
+    <div class="calculator" id="ci-calculator" style="display:none;">
+      <h2>Compound Interest Calculator</h2>
+      <label>Principal Amount (₹)
+        <input type="number" id="ci-principal" min="0" value="100000">
+      </label>
+      <label>Annual Interest Rate (%)
+        <input type="number" id="ci-rate" min="0" value="8">
+      </label>
+      <label>No. of Years
+        <input type="number" id="ci-years" min="1" value="10">
+      </label>
+      <label>Compounding Frequency (per year)
+        <input type="number" id="ci-frequency" min="1" value="1">
+      </label>
+      <button class="btn" onclick="calculateCI()">Calculate</button>
+      <div class="result" id="ci-result"></div>
+      <canvas id="ci-chart" height="110"></canvas>
+    </div>
+
+    <!-- Home Loan vs SIP Calculator -->
+    <div class="calculator" id="home-sip-calculator" style="display:none;">
+      <h2>Home Loan vs Rent + SIP (with Down Payment as Lumpsum in SIP)</h2>
+      <label>Home Price (₹)
+        <input type="number" id="hl-homeprice" min="0" value="6000000">
+      </label>
+      <label>Down Payment (₹)
+        <input type="number" id="hl-down" min="0" value="1200000">
+      </label>
+      <label>Loan Amount (₹)
+        <input type="number" id="hl-loan" min="0" value="4800000">
+      </label>
+      <label>Home Loan Rate (% Annual)
+        <input type="number" id="hl-rate" min="0" value="8">
+      </label>
+      <label>Loan Tenure (Years)
+        <input type="number" id="hl-tenure" min="1" value="20">
+      </label>
+      <hr style="margin:16px 0 10px 0;">
+      <label><b>If Not Buy:</b> Starting Rent (₹/month)
+        <input type="number" id="hl-rent" min="0" value="18000">
+      </label>
+      <label>Annual Rent Hike (%)
+        <input type="number" id="hl-rentinc" min="0" value="5">
+      </label>
+      <label>Expected SIP Return (%)
+        <input type="number" id="hl-siprate" min="0" value="13">
+      </label>
+      <label>Property Annual Appreciation (%)
+        <input type="number" id="hl-appreciation" min="0" value="6">
+      </label>
+      <button class="btn" onclick="calculateHomeSIP()">Calculate</button>
+      <div class="result" id="hl-result"></div>
+      <canvas id="hl-chart" height="110"></canvas>
+    </div>
+
+    <!-- Car Loan vs SIP Calculator -->
+    <div class="calculator" id="car-sip-calculator" style="display:none;">
+      <h2>Car Loan vs SIP</h2>
+      <label>Car Price (₹)
+        <input type="number" id="car-price" min="0" value="900000">
+      </label>
+      <label>Loan Amount (₹)
+        <input type="number" id="car-loan" min="0" value="700000">
+      </label>
+      <label>EMI Interest Rate (%)
+        <input type="number" id="car-rate" min="0" value="9">
+      </label>
+      <label>Loan Tenure (Years)
+        <input type="number" id="car-tenure" min="1" value="5">
+      </label>
+      <label>Monthly Running (Km)
+        <input type="number" id="car-km" min="0" value="1200">
+      </label>
+      <label>Fuel Type
+        <select id="car-fuel">
+          <option value="10">Petrol (₹10/km)</option>
+          <option value="5">Diesel (₹5/km)</option>
+          <option value="3">CNG (₹3/km)</option>
+          <option value="3">EV (₹3/km)</option>
+        </select>
+      </label>
+      <label>Monthly Maintenance (₹)
+        <input type="number" id="car-maint" min="0" value="1500">
+      </label>
+      <label>Expected SIP Return (%)
+        <input type="number" id="car-siprate" min="0" value="13">
+      </label>
+      <button class="btn" onclick="calculateCarSIP()">Calculate</button>
+      <div class="result" id="car-result"></div>
+      <canvas id="car-chart" height="110"></canvas>
+    </div>
+
+    <!-- Smart Car Loan Payoff Calculator -->
+    <div class="calculator" id="smart-carloan" style="display:none;">
+      <h2>How To Smartly Pay Car Loan</h2>
+      <label>Loan Amount (₹)
+        <input type="number" id="sc-loan" min="0" value="700000">
+      </label>
+      <label>Loan Tenure (Years)
+        <input type="number" id="sc-tenure" min="1" value="5">
+      </label>
+      <label>Interest Rate (%)
+        <input type="number" id="sc-rate" min="0" value="9">
+      </label>
+      <label>After how many years do you get a lump sum? (years)
+        <input type="number" id="sc-lumpsum-years" min="1" value="2">
+      </label>
+      <label>Lump Sum Amount Available (₹)
+        <input type="number" id="sc-lumpsum" min="0" value="200000">
+      </label>
+      <label>Expected Mutual Fund Return (%)
+        <input type="number" id="sc-mfreturn" min="0" value="13">
+      </label>
+      <button class="btn" onclick="calculateSmartCarLoan()">Calculate</button>
+      <div class="result" id="sc-result"></div>
+      <canvas id="sc-chart" height="110"></canvas>
+    </div>
+  </main>
+  <footer>
+    &copy; 2025 [Your Name]. Financial calculators for Indian users.<br>
+    <small>Disclaimer: Calculators are for informational purposes only. Returns assumed are not guaranteed.</small>
+  </footer>
+  <script>
+    // TAB NAVIGATION
+    function switchTab(id, el) {
+      document.querySelectorAll('.calculator').forEach(d=>d.style.display='none');
+      document.getElementById(id).style.display='block';
+      document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // --- SIP Calculator ---
+    let sipChart;
+    function calculateSIP() {
+      const amt = +document.getElementById('sip-amount').value;
+      const rate = +document.getElementById('sip-rate').value / 100 / 12;
+      const years = +document.getElementById('sip-years').value;
+      const n = years * 12;
+      let corpus = [], labels = [], value = 0;
+      for (let i = 1; i <= n; i++) {
+          value = value * (1 + rate) + amt;
+          if (i % 12 === 0) {
+              corpus.push(Math.round(value));
+              labels.push('Year ' + (i / 12));
+          }
+      }
+      document.getElementById('sip-result').innerHTML = `Maturity Amount: <b>₹${Math.round(value).toLocaleString()}</b> <br><span style="font-weight:normal;">(Total Invested: ₹${(amt*n).toLocaleString()})</span>`;
+      if (sipChart) sipChart.destroy();
+      sipChart = new Chart(document.getElementById('sip-chart').getContext('2d'), {
+        type:'line',
+        data:{labels,datasets:[{label:'SIP Corpus',data:corpus,borderColor:'#10cfc9',backgroundColor:'rgba(16,207,201,0.18)',fill:true}]},
+        options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+      });
+    }
+
+    // --- EMI Calculator ---
+    let emiChart;
+    function calculateEMI() {
+      const principal = +document.getElementById('emi-principal').value;
+      const annualRate = +document.getElementById('emi-rate').value;
+      const years = +document.getElementById('emi-years').value;
+      const r = annualRate/12/100;
+      const n = years*12;
+      const emi = r === 0 ? principal/n : principal*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+      let outPrincipal = principal, totalInt = 0, principalPaid=0, interestArr=[], principalArr=[], labels=[];
+      for(let i=1; i<=n; i++){
+        let interestComponent = outPrincipal * r;
+        let principalComponent = emi - interestComponent;
+        outPrincipal -= principalComponent;
+        principalPaid += principalComponent;
+        totalInt += interestComponent;
+        if(i%12 === 0){
+          interestArr.push(+totalInt.toFixed(0));
+          principalArr.push(+principalPaid.toFixed(0));
+          labels.push("Year "+ (i/12));
+        }
+      }
+      document.getElementById('emi-result').innerHTML =
+        `Monthly EMI: <b>₹${emi.toLocaleString(undefined,{maximumFractionDigits:2})}</b><br><span style="font-weight:normal;">Total Payment: ₹${(emi*n).toLocaleString(undefined)}<br>Interest: ₹${(emi*n-principal).toLocaleString(undefined)}</span>`;
+      if(emiChart) emiChart.destroy();
+      emiChart = new Chart(document.getElementById('emi-chart').getContext('2d'),{
+        type:'bar',
+        data:{labels,datasets:[
+          {label:'Cumulative Principal Paid',data:principalArr,backgroundColor:'#10cfc9'},
+          {label:'Cumulative Interest Paid',data:interestArr,backgroundColor:'#ffcccb'},
+        ]},
+        options:{scales:{y:{beginAtZero:true}},plugins:{legend:{display:true}}}
+      });
+    }
+
+    // --- Compound Interest Calculator ---
+    let ciChart;
+    function calculateCI() {
+      const principal = +document.getElementById('ci-principal').value;
+      const rate = +document.getElementById('ci-rate').value/100;
+      const years = +document.getElementById('ci-years').value;
+      const freq = +document.getElementById('ci-frequency').value;
+      let values = [], labels = [], amount = 0;
+      for(let y=1;y<=years;y++){
+        amount = principal * Math.pow((1+rate/freq),freq*y);
+        values.push(amount.toFixed(0)); labels.push('Year '+y);
+      }
+      document.getElementById('ci-result').innerHTML =
+        `Future Value: <b>₹${(+amount).toLocaleString(undefined,{maximumFractionDigits:2})}</b><br><span style="font-weight:normal;">Total Gain: ₹${(amount-principal).toLocaleString(undefined,{maximumFractionDigits:2})}</span>`;
+      if(ciChart) ciChart.destroy();
+      ciChart = new Chart(document.getElementById('ci-chart').getContext('2d'),{
+        type:'line',
+        data:{labels,datasets:[{label:'Compound Growth',data:values,borderColor:'#2494e2',backgroundColor:'rgba(36,148,226,0.15)',fill:true}]},
+        options:{scales:{y:{beginAtZero:true}},plugins:{legend:{display:false}}}
+      });
+    }
+
+    // --- Home Loan vs SIP Calculator MODIFIED to add Down Payment as initial SIP ---
+    let hlChart;
+    function calculateHomeSIP() {
+      const homePrice = +document.getElementById('hl-homeprice').value;
+      const down = +document.getElementById('hl-down').value;
+      const loanAmt = +document.getElementById('hl-loan').value;
+      const rate = +document.getElementById('hl-rate').value;
+      const tenure = +document.getElementById('hl-tenure').value;
+      const rentInit = +document.getElementById('hl-rent').value;
+      const rentInc = +document.getElementById('hl-rentinc').value;
+      const sipAnnualRate = +document.getElementById('hl-siprate').value/100;
+      const appreciation = +document.getElementById('hl-appreciation').value/100;
+
+      const sipRate = sipAnnualRate / 12;
+      const r = rate/12/100;
+      const n = tenure*12;
+      let emi = r==0?loanAmt/n : loanAmt*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+
+      let homeValueArr = [], rentArr = [], sipArr = [], emiArr = [], netSipArr = [], labels=[];
+      let homeValue = homePrice, currRent = rentInit;
+      let sipBalance = down; // key: include down payment as lumpsum SIP upfront
+      let totalRent = 0, totalEmi = 0, totalSipInvested = down;
+      for(let y=1;y<=tenure;y++){
+        for(let m=0;m<12;m++){
+          let diff = emi - currRent;
+          if(diff<0) diff=0;
+          sipBalance = sipBalance*(1+sipRate) + diff;
+          totalSipInvested += diff;
+          totalRent += currRent;
+          totalEmi += emi;
+        }
+        currRent *= (1+rentInc/100);
+        homeValue *= (1+appreciation);
+        homeValueArr.push(+homeValue.toFixed(0));
+        rentArr.push(+totalRent.toFixed(0));
+        sipArr.push(+sipBalance.toFixed(0));
+        emiArr.push(+totalEmi.toFixed(0));
+        netSipArr.push(+sipBalance - +totalRent);
+        labels.push('Year '+y);
+      }
+      const netHomeBuyWealth = homeValueArr[homeValueArr.length-1] - (totalEmi+down);
+      const netRentSipWealth = sipArr[sipArr.length-1] - totalRent;
+      document.getElementById('hl-result').innerHTML = `
+        <b>Buy Option:</b> <br>
+        <span style='font-weight:normal'>Home Value after <b>${tenure} years</b>: ₹${(+homeValueArr[homeValueArr.length-1]).toLocaleString()}</span><br>
+        <span style='font-weight:normal'>Total Paid (EMIs + Downpayment): ₹${(+totalEmi+down).toLocaleString()}</span>
+        <br><br>
+        <b>Rent + SIP Option (with down payment invested as lumpsum in SIP):</b> <br>
+        <span style='font-weight:normal'>SIP Corpus: ₹${sipArr[sipArr.length-1].toLocaleString()}</span><br>
+        <span style='font-weight:normal'>Total Rent Paid: ₹${totalRent.toLocaleString()}</span>
+        <br><br>
+        <b>Net Wealth after ${tenure} yrs (Buy): <span style='color:#1ac888'>₹${netHomeBuyWealth.toLocaleString()}</span></b><br>
+        <b>Net Wealth after ${tenure} yrs (Rent+SIP): <span style="color:#e28a24">₹${netRentSipWealth.toLocaleString()}</span></b>
+      `;
+      if(hlChart) hlChart.destroy();
+      hlChart = new Chart(document.getElementById('hl-chart').getContext('2d'),{
+        type:'line',
+        data:{
+          labels:labels,
+          datasets:[
+            {label:'Home Value',data:homeValueArr,borderColor:'#5081fc',backgroundColor:'rgba(80,129,252,0.12)',fill:false,pointRadius:2},
+            {label:'SIP Corpus',data:sipArr,borderColor:'#1ac888',backgroundColor:'rgba(26,200,136,0.12)',fill:false,pointRadius:2},
+            {label:'Cumulative Rent Paid',data:rentArr,borderColor:'#e28a24',backgroundColor:'rgba(226,138,36,0.11)',fill:false,borderDash:[5,5],pointRadius:0},
+          ]
+        },
+        options:{
+          plugins:{legend:{display:true}},
+          scales:{y:{beginAtZero:true}}
+        }
+      });
+    }
+
+    // --- Car Loan vs SIP Calculator with chart ---
+    let carChart;
+    function calculateCarSIP() {
+      const carPrice = +document.getElementById('car-price').value;
+      const loanAmt = +document.getElementById('car-loan').value;
+      const rate = +document.getElementById('car-rate').value;
+      const tenure = +document.getElementById('car-tenure').value;
+      const kmMonth = +document.getElementById('car-km').value;
+      const fuelRate = +document.getElementById('car-fuel').value;
+      const maint = +document.getElementById('car-maint').value;
+      const sipRate = +document.getElementById('car-siprate').value/100/12;
+
+      const months = tenure*12;
+      const r = rate/12/100;
+      const emi = r === 0 ? loanAmt/months : loanAmt*r*Math.pow(1+r,months)/(Math.pow(1+r,months)-1);
+      const totalFuel = kmMonth * fuelRate * months;
+      const totalMaint = maint * months;
+      const downpayment = carPrice-loanAmt;
+      const totalOutgo = emi*months + totalFuel + totalMaint + downpayment;
+      let sipBalance = 0;
+      let dataArr = [], altArr = [], labels=[];
+      for(let m=1; m<=months; m++) {
+        let outgo = emi + kmMonth*fuelRate + maint;
+        sipBalance = sipBalance * (1 + sipRate) + outgo;
+        if(m%12===0){
+          dataArr.push((emi*m+kmMonth*fuelRate*m+maint*m+downpayment).toFixed(0));
+          altArr.push(sipBalance.toFixed(0));
+          labels.push("Year "+(m/12));
+        }
+      }
+      document.getElementById('car-result').innerHTML = `
+        <b>Car Ownership Outgo (over ${tenure} years):</b><br>
+        EMI Paid: ₹${(emi*months).toLocaleString(undefined,{maximumFractionDigits:0})}<br>
+        Fuel: ₹${totalFuel.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
+        Maintenance: ₹${totalMaint.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
+        Downpayment: ₹${downpayment.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
+        <b>Total Outgo:</b> ₹${totalOutgo.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
+        <br>
+        <b>Alternative SIP Value (if all these costs are invested):</b><br>
+        SIP Corpus: ₹${sipBalance.toLocaleString(undefined,{maximumFractionDigits:0})}
+      `;
+      if(carChart) carChart.destroy();
+      carChart = new Chart(document.getElementById('car-chart').getContext('2d'), {
+        type:'line',
+        data:{labels,datasets:[
+          {label:'Cumulative Spend on Car (Ownership)',data:dataArr,borderColor:'#e2747c',backgroundColor:'rgba(226,116,124,0.11)',fill:true,pointRadius:1},
+          {label:'Alternate SIP Corpus (if not bought)',data:altArr,borderColor:'#10cfc9',backgroundColor:'rgba(16,207,201,0.15)',fill:true,pointRadius:1},
+        ]},
+        options:{scales:{y:{beginAtZero:true}},plugins:{legend:{display:true}}}
+      });
+    }
+
+    // --- Smart Car Loan Payoff Calculator with chart ---
+    let scChart;
+    function calculateSmartCarLoan() {
+      const loanAmt = +document.getElementById('sc-loan').value;
+      const tenure = +document.getElementById('sc-tenure').value;
+      const rate = +document.getElementById('sc-rate').value;
+      const lumpYears = +document.getElementById('sc-lumpsum-years').value;
+      const lumpAmt = +document.getElementById('sc-lumpsum').value;
+      const mfReturn = +document.getElementById('sc-mfreturn').value/100/12;
+
+      const n = tenure*12;
+      const r = rate/12/100;
+      const emi = r === 0 ? loanAmt/n : loanAmt*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+
+      const paidMonths = lumpYears*12;
+      let outstanding = loanAmt;
+      for(let i=0;i<paidMonths;i++) {
+        let interest = outstanding * r;
+        let principal = emi - interest;
+        outstanding -= principal;
+      }
+      const remainingMonths = n - paidMonths;
+      let mfBalance = lumpAmt, mfBalHistoric = [];
+      let exhaustedAt = null;
+      for(let i=0;i<remainingMonths;i++) {
+        mfBalance = mfBalance * (1 + mfReturn) - emi;
+        mfBalHistoric.push(mfBalance>0?+mfBalance.toFixed(0):0);
+        if (!exhaustedAt && mfBalance<0) exhaustedAt = i+1;
+      }
+      document.getElementById('sc-result').innerHTML = `
+        <b>Option 1: Use Lump Sum to Prepay Loan after ${lumpYears} years</b><br>
+        <b>Outstanding Principal after ${lumpYears} years:</b> ₹${outstanding.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
+        <hr>
+        <b>Option 2: Invest Lump Sum in Mutual Fund, use SWP for EMI</b><br>
+        ${
+          exhaustedAt
+            ? `<b>Corpus exhausted after ${exhaustedAt} EMIs (months)!<br>SWP couldn't fund the EMIs for entire remaining period.</b>`
+            : `<b>Corpus after all EMIs paid: ₹${mfBalance.toLocaleString(undefined,{maximumFractionDigits:0})}</b>`
+        }
+      `;
+      let monthsArr = [];
+      for(let k=1; k<=mfBalHistoric.length; k++) monthsArr.push('Month '+k);
+      if(scChart) scChart.destroy();
+      scChart = new Chart(document.getElementById('sc-chart').getContext('2d'),{
+        type:'line',
+        data:{
+          labels: monthsArr,
+          datasets: [
+            {label:'MF Corpus During SWP', data: mfBalHistoric, borderColor:'#1ac888', backgroundColor:'rgba(26,200,136,0.06)',fill:true,pointRadius:0.8}
+          ]
+        },
+        options:{scales:{y:{beginAtZero:true}},plugins:{legend:{display:false}}}
+      });
+    }
+  </script>
+</body>
+</html>
