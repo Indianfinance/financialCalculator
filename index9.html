@@ -2,515 +2,1414 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Financial Calculators by [Your Name]</title>
+  <title>Advanced Financial Calculators</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --card-bg: rgba(255, 255, 255, 0.12);
+      --card-border: rgba(255, 255, 255, 0.2);
+      --text-primary: #2d3748;
+      --text-secondary: #718096;
+      --text-light: #a0aec0;
+      --backdrop-blur: blur(10px);
+      --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 8px 25px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
+      --border-radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      margin: 0; padding: 0;
-      font-family: 'Montserrat', 'Roboto', Arial, sans-serif;
-      background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
+      color: var(--text-primary);
+      line-height: 1.6;
     }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
     header {
-      background: linear-gradient(90deg,#10cfc9,#2494e2);
-      color: #fff; text-align: center; padding: 38px 0 22px 0;border-radius: 0 0 44px 44px;
-      box-shadow: 0 3px 20px rgba(20,60,80,0.08);
-      margin-bottom: 24px;
+      background: var(--card-bg);
+      backdrop-filter: var(--backdrop-blur);
+      border-bottom: 1px solid var(--card-border);
+      padding: 2rem 0;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
     }
-    main { max-width: 950px; margin: 0 auto; padding: 10px;}
-    h1 { font-size: 2.5rem; margin: 0; letter-spacing: 1px;}
-    nav { margin-bottom: 32px; text-align:center;}
-    nav a {
-      background:#fff; color:#1C7BA0; text-decoration: none; margin: 3px 7px;
-      font-weight: bold; display:inline-block; padding:8px 20px; border-radius:22px; font-size:1em;
-      transition: all .13s; border:1px solid #e7e7e7;
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+      pointer-events: none;
     }
-    nav a.active, nav a:hover {
-      background:linear-gradient(90deg,#10cfc9,#2494e2);color:#fff;
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      text-align: center;
+      color: white;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.2rem;
+      font-weight: 400;
+    }
+
+    nav {
+      margin-bottom: 3rem;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .nav-btn {
+      background: var(--card-bg);
+      backdrop-filter: var(--backdrop-blur);
+      border: 1px solid var(--card-border);
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.6s;
+    }
+
+    .nav-btn:hover::before {
+      left: 100%;
+    }
+
+    .nav-btn:hover, .nav-btn.active {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .nav-btn.active {
+      background: var(--success-gradient);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
     .calculator {
-      background: #fff; border-radius: 17px;
-      box-shadow: 0 4px 18px rgba(4,52,70,.09);
-      margin-bottom: 38px; padding: 36px 24px 34px 24px;
-      max-width:560px; margin-left:auto; margin-right:auto;
-      position:relative;
+      background: var(--card-bg);
+      backdrop-filter: var(--backdrop-blur);
+      border: 1px solid var(--card-border);
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
     }
+
+    .calculator::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary-gradient);
+    }
+
     .calculator h2 {
-      color:#03a9f4; margin-top:0;margin-bottom:16px;letter-spacing:0.5px;
-      font-size:1.18em;
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
     }
-    .calculator label { display: block; margin: 6px 0 2px 2px;font-size:.99em;}
-    .calculator input, .calculator select {
-      width: 100%; padding: 10px; margin-bottom: 13px;
-      border: 1px solid #d0ecfc;
-      border-radius: 4px;font-size: 1.1em; background: #f6fcff
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
     }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      align-items: end;
+    }
+
+    label {
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.9rem;
+    }
+
+    input, select {
+      padding: 0.875rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: var(--transition);
+      backdrop-filter: var(--backdrop-blur);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    select option {
+      background: #2d3748;
+      color: white;
+    }
+
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .toggle {
+      position: relative;
+      width: 50px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .toggle::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .toggle.active {
+      background: var(--success-gradient);
+    }
+
+    .toggle.active::before {
+      transform: translateX(26px);
+    }
+
     .btn {
-      background: linear-gradient(90deg,#10cfc9,#2494e2);
-      color: #fff; font-weight: 700; border: none; padding: 12px 28px;
-      border-radius: 22px; cursor: pointer; transition:.14s;
-      font-size:1.03em; margin-top:3px;
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: var(--border-radius);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
     }
-    .btn:hover {opacity:.91; letter-spacing:0.3px;}
-    .result {
-      font-size: 1.15em; font-weight: bold; color: #2494e2; margin-top: 16px; margin-bottom:6px;
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.6s;
     }
-    canvas {margin-top:16px;}
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .results-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .result-card {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      backdrop-filter: var(--backdrop-blur);
+    }
+
+    .result-card h3 {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .result-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.25rem;
+    }
+
+    .result-subtitle {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .chart-container {
+      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     footer {
-      text-align: center; color: #888; padding: 18px 0 8px 0; margin-top:36px;
-      background:rgba(255,255,255,.23);font-size:.97em;
+      background: var(--card-bg);
+      backdrop-filter: var(--backdrop-blur);
+      border-top: 1px solid var(--card-border);
+      padding: 2rem 0;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.8);
+      margin-top: 4rem;
     }
-    @media(max-width:700px){
-      main{padding:2px;}
-      .calculator{padding:17px 7px;}
-      nav a{padding:6px 8px;font-size:.97em;}
+
+    .footer-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .disclaimer {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .step-up-section {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .step-up-section.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 15px;
+      }
+      
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      .calculator {
+        padding: 1.5rem;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .nav-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .nav-btn {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+      }
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Financial Calculators</h1>
-    <div style="font-size:1.13em;">
-      SIP · EMI · Compound Interest · Home Buy vs SIP · Car Loan & More
+    <div class="container">
+      <h1>Advanced Financial Calculators</h1>
+      <p class="subtitle">SIP • EMI • Compound Interest • Investment Strategies • Smart Loan Planning</p>
     </div>
   </header>
-  <main>
+
+  <div class="container">
     <nav>
-      <a href="#" onclick="switchTab('sip-calculator',this);return false;" class="active">SIP Calculator</a>
-      <a href="#" onclick="switchTab('emi-calculator',this);return false;">EMI Calculator</a>
-      <a href="#" onclick="switchTab('ci-calculator',this);return false;">Compound Interest</a>
-      <a href="#" onclick="switchTab('home-sip-calculator',this);return false;">Home Loan vs SIP</a>
-      <a href="#" onclick="switchTab('car-sip-calculator',this);return false;">Car Loan vs SIP</a>
-      <a href="#" onclick="switchTab('smart-carloan',this);return false;">Smart Car Loan Payoff</a>
+      <div class="nav-container">
+        <a href="#" class="nav-btn active" onclick="switchTab('sip-calculator', this)">
+          <i class="fas fa-chart-line"></i> SIP Calculator
+        </a>
+        <a href="#" class="nav-btn" onclick="switchTab('emi-calculator', this)">
+          <i class="fas fa-calculator"></i> EMI Calculator
+        </a>
+        <a href="#" class="nav-btn" onclick="switchTab('ci-calculator', this)">
+          <i class="fas fa-coins"></i> Compound Interest
+        </a>
+        <a href="#" class="nav-btn" onclick="switchTab('home-sip-calculator', this)">
+          <i class="fas fa-home"></i> Home vs SIP
+        </a>
+        <a href="#" class="nav-btn" onclick="switchTab('car-sip-calculator', this)">
+          <i class="fas fa-car"></i> Car vs SIP
+        </a>
+        <a href="#" class="nav-btn" onclick="switchTab('smart-carloan', this)">
+          <i class="fas fa-brain"></i> Smart Car Loan
+        </a>
+      </div>
     </nav>
 
-    <!-- SIP Calculator -->
+    <!-- Enhanced SIP Calculator -->
     <div class="calculator" id="sip-calculator">
-      <h2>SIP Calculator</h2>
-      <label>Monthly Investment (₹)
-        <input type="number" id="sip-amount" min="0" value="5000">
-      </label>
-      <label>Expected Annual Return (%)
-        <input type="number" id="sip-rate" min="0" value="12">
-      </label>
-      <label>Investment Duration (Years)
-        <input type="number" id="sip-years" min="1" value="10">
-      </label>
-      <button class="btn" onclick="calculateSIP()">Calculate</button>
-      <div class="result" id="sip-result"></div>
-      <canvas id="sip-chart" height="110"></canvas>
+      <h2><i class="fas fa-chart-line"></i> Advanced SIP Calculator</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Initial Investment (₹)</label>
+          <input type="number" id="sip-initial" min="0" value="0" placeholder="One-time lump sum">
+        </div>
+        
+        <div class="form-group">
+          <label>Monthly Investment (₹)</label>
+          <input type="number" id="sip-amount" min="0" value="5000" placeholder="Monthly SIP amount">
+        </div>
+        
+        <div class="form-group">
+          <label>Expected Annual Return (%)</label>
+          <input type="number" id="sip-rate" min="0" step="0.1" value="12" placeholder="Expected returns">
+        </div>
+        
+        <div class="form-group">
+          <label>Investment Duration (Years)</label>
+          <input type="number" id="sip-years" min="1" value="10" placeholder="Investment period">
+        </div>
+      </div>
+
+      <div class="toggle-container">
+        <div class="toggle" id="stepup-toggle" onclick="toggleStepUp()"></div>
+        <label>Enable Annual Step-up</label>
+      </div>
+
+      <div class="step-up-section" id="stepup-section">
+        <div class="form-group">
+          <label>Annual Step-up (%)</label>
+          <input type="number" id="sip-stepup" min="0" max="50" value="10" placeholder="Yearly increment">
+        </div>
+      </div>
+
+      <button class="btn" onclick="calculateSIP()">
+        <i class="fas fa-calculator"></i> Calculate SIP
+      </button>
+
+      <div class="results-container" id="sip-results" style="display: none;">
+        <div class="result-card">
+          <h3>Final Corpus</h3>
+          <div class="result-value" id="sip-corpus">₹0</div>
+          <div class="result-subtitle">Maturity Amount</div>
+        </div>
+        <div class="result-card">
+          <h3>Total Invested</h3>
+          <div class="result-value" id="sip-invested">₹0</div>
+          <div class="result-subtitle">Principal Amount</div>
+        </div>
+        <div class="result-card">
+          <h3>Total Returns</h3>
+          <div class="result-value" id="sip-returns">₹0</div>
+          <div class="result-subtitle">Capital Gains</div>
+        </div>
+        <div class="result-card">
+          <h3>Overall Returns</h3>
+          <div class="result-value" id="sip-percentage">0%</div>
+          <div class="result-subtitle">Percentage Gain</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="sip-chart" height="400"></canvas>
+      </div>
     </div>
 
-    <!-- EMI Calculator -->
+    <!-- Enhanced EMI Calculator -->
     <div class="calculator" id="emi-calculator" style="display:none;">
-      <h2>EMI Calculator</h2>
-      <label>Loan Amount (₹)
-        <input type="number" id="emi-principal" min="0" value="500000">
-      </label>
-      <label>Annual Interest Rate (%)
-        <input type="number" id="emi-rate" min="0" value="9">
-      </label>
-      <label>Loan Tenure (Years)
-        <input type="number" id="emi-years" min="1" value="5">
-      </label>
-      <button class="btn" onclick="calculateEMI()">Calculate</button>
-      <div class="result" id="emi-result"></div>
-      <canvas id="emi-chart" height="110"></canvas>
+      <h2><i class="fas fa-calculator"></i> EMI Calculator</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Loan Amount (₹)</label>
+          <input type="number" id="emi-principal" min="0" value="500000" placeholder="Principal amount">
+        </div>
+        
+        <div class="form-group">
+          <label>Annual Interest Rate (%)</label>
+          <input type="number" id="emi-rate" min="0" step="0.1" value="9" placeholder="Interest rate">
+        </div>
+        
+        <div class="form-group">
+          <label>Loan Tenure (Years)</label>
+          <input type="number" id="emi-years" min="1" value="5" placeholder="Loan period">
+        </div>
+      </div>
+
+      <button class="btn" onclick="calculateEMI()">
+        <i class="fas fa-calculator"></i> Calculate EMI
+      </button>
+
+      <div class="results-container" id="emi-results" style="display: none;">
+        <div class="result-card">
+          <h3>Monthly EMI</h3>
+          <div class="result-value" id="emi-amount">₹0</div>
+          <div class="result-subtitle">Per Month</div>
+        </div>
+        <div class="result-card">
+          <h3>Total Payment</h3>
+          <div class="result-value" id="emi-total">₹0</div>
+          <div class="result-subtitle">Total Amount</div>
+        </div>
+        <div class="result-card">
+          <h3>Total Interest</h3>
+          <div class="result-value" id="emi-interest">₹0</div>
+          <div class="result-subtitle">Interest Component</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="emi-chart" height="400"></canvas>
+      </div>
     </div>
 
-    <!-- Compound Interest Calculator -->
+    <!-- Enhanced Compound Interest Calculator -->
     <div class="calculator" id="ci-calculator" style="display:none;">
-      <h2>Compound Interest Calculator</h2>
-      <label>Principal Amount (₹)
-        <input type="number" id="ci-principal" min="0" value="100000">
-      </label>
-      <label>Annual Interest Rate (%)
-        <input type="number" id="ci-rate" min="0" value="8">
-      </label>
-      <label>No. of Years
-        <input type="number" id="ci-years" min="1" value="10">
-      </label>
-      <label>Compounding Frequency (per year)
-        <input type="number" id="ci-frequency" min="1" value="1">
-      </label>
-      <button class="btn" onclick="calculateCI()">Calculate</button>
-      <div class="result" id="ci-result"></div>
-      <canvas id="ci-chart" height="110"></canvas>
+      <h2><i class="fas fa-coins"></i> Compound Interest Calculator</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Principal Amount (₹)</label>
+          <input type="number" id="ci-principal" min="0" value="100000" placeholder="Initial amount">
+        </div>
+        
+        <div class="form-group">
+          <label>Annual Interest Rate (%)</label>
+          <input type="number" id="ci-rate" min="0" step="0.1" value="8" placeholder="Interest rate">
+        </div>
+        
+        <div class="form-group">
+          <label>Investment Period (Years)</label>
+          <input type="number" id="ci-years" min="1" value="10" placeholder="Time period">
+        </div>
+        
+        <div class="form-group">
+          <label>Compounding Frequency</label>
+          <select id="ci-frequency">
+            <option value="1">Annually</option>
+            <option value="2">Semi-annually</option>
+            <option value="4">Quarterly</option>
+            <option value="12">Monthly</option>
+            <option value="365">Daily</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn" onclick="calculateCI()">
+        <i class="fas fa-calculator"></i> Calculate
+      </button>
+
+      <div class="results-container" id="ci-results" style="display: none;">
+        <div class="result-card">
+          <h3>Future Value</h3>
+          <div class="result-value" id="ci-future">₹0</div>
+          <div class="result-subtitle">Maturity Amount</div>
+        </div>
+        <div class="result-card">
+          <h3>Total Gain</h3>
+          <div class="result-value" id="ci-gain">₹0</div>
+          <div class="result-subtitle">Interest Earned</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="ci-chart" height="400"></canvas>
+      </div>
     </div>
 
     <!-- Home Loan vs SIP Calculator -->
     <div class="calculator" id="home-sip-calculator" style="display:none;">
-      <h2>Home Loan vs Rent + SIP (with Down Payment as Lumpsum in SIP)</h2>
-      <label>Home Price (₹)
-        <input type="number" id="hl-homeprice" min="0" value="6000000">
-      </label>
-      <label>Down Payment (₹)
-        <input type="number" id="hl-down" min="0" value="1200000">
-      </label>
-      <label>Loan Amount (₹)
-        <input type="number" id="hl-loan" min="0" value="4800000">
-      </label>
-      <label>Home Loan Rate (% Annual)
-        <input type="number" id="hl-rate" min="0" value="8">
-      </label>
-      <label>Loan Tenure (Years)
-        <input type="number" id="hl-tenure" min="1" value="20">
-      </label>
-      <hr style="margin:16px 0 10px 0;">
-      <label><b>If Not Buy:</b> Starting Rent (₹/month)
-        <input type="number" id="hl-rent" min="0" value="18000">
-      </label>
-      <label>Annual Rent Hike (%)
-        <input type="number" id="hl-rentinc" min="0" value="5">
-      </label>
-      <label>Expected SIP Return (%)
-        <input type="number" id="hl-siprate" min="0" value="13">
-      </label>
-      <label>Property Annual Appreciation (%)
-        <input type="number" id="hl-appreciation" min="0" value="6">
-      </label>
-      <button class="btn" onclick="calculateHomeSIP()">Calculate</button>
+      <h2><i class="fas fa-home"></i> Home Loan vs Rent + SIP</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Home Price (₹)</label>
+          <input type="number" id="hl-homeprice" min="0" value="6000000">
+        </div>
+        
+        <div class="form-group">
+          <label>Down Payment (₹)</label>
+          <input type="number" id="hl-down" min="0" value="1200000">
+        </div>
+        
+        <div class="form-group">
+          <label>Loan Amount (₹)</label>
+          <input type="number" id="hl-loan" min="0" value="4800000">
+        </div>
+        
+        <div class="form-group">
+          <label>Home Loan Rate (%)</label>
+          <input type="number" id="hl-rate" min="0" step="0.1" value="8">
+        </div>
+        
+        <div class="form-group">
+          <label>Loan Tenure (Years)</label>
+          <input type="number" id="hl-tenure" min="1" value="20">
+        </div>
+        
+        <div class="form-group">
+          <label>Starting Rent (₹/month)</label>
+          <input type="number" id="hl-rent" min="0" value="18000">
+        </div>
+        
+        <div class="form-group">
+          <label>Annual Rent Hike (%)</label>
+          <input type="number" id="hl-rentinc" min="0" value="5">
+        </div>
+        
+        <div class="form-group">
+          <label>Expected SIP Return (%)</label>
+          <input type="number" id="hl-siprate" min="0" step="0.1" value="13">
+        </div>
+        
+        <div class="form-group">
+          <label>Property Appreciation (%)</label>
+          <input type="number" id="hl-appreciation" min="0" step="0.1" value="6">
+        </div>
+      </div>
+
+      <button class="btn" onclick="calculateHomeSIP()">
+        <i class="fas fa-calculator"></i> Compare Options
+      </button>
+
       <div class="result" id="hl-result"></div>
-      <canvas id="hl-chart" height="110"></canvas>
+      <div class="chart-container">
+        <canvas id="hl-chart" height="400"></canvas>
+      </div>
     </div>
 
     <!-- Car Loan vs SIP Calculator -->
     <div class="calculator" id="car-sip-calculator" style="display:none;">
-      <h2>Car Loan vs SIP</h2>
-      <label>Car Price (₹)
-        <input type="number" id="car-price" min="0" value="900000">
-      </label>
-      <label>Loan Amount (₹)
-        <input type="number" id="car-loan" min="0" value="700000">
-      </label>
-      <label>EMI Interest Rate (%)
-        <input type="number" id="car-rate" min="0" value="9">
-      </label>
-      <label>Loan Tenure (Years)
-        <input type="number" id="car-tenure" min="1" value="5">
-      </label>
-      <label>Monthly Running (Km)
-        <input type="number" id="car-km" min="0" value="1200">
-      </label>
-      <label>Fuel Type
-        <select id="car-fuel">
-          <option value="10">Petrol (₹10/km)</option>
-          <option value="5">Diesel (₹5/km)</option>
-          <option value="3">CNG (₹3/km)</option>
-          <option value="3">EV (₹3/km)</option>
-        </select>
-      </label>
-      <label>Monthly Maintenance (₹)
-        <input type="number" id="car-maint" min="0" value="1500">
-      </label>
-      <label>Expected SIP Return (%)
-        <input type="number" id="car-siprate" min="0" value="13">
-      </label>
-      <button class="btn" onclick="calculateCarSIP()">Calculate</button>
+      <h2><i class="fas fa-car"></i> Car Loan vs SIP</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Car Price (₹)</label>
+          <input type="number" id="car-price" min="0" value="900000">
+        </div>
+        
+        <div class="form-group">
+          <label>Loan Amount (₹)</label>
+          <input type="number" id="car-loan" min="0" value="700000">
+        </div>
+        
+        <div class="form-group">
+          <label>EMI Interest Rate (%)</label>
+          <input type="number" id="car-rate" min="0" step="0.1" value="9">
+        </div>
+        
+        <div class="form-group">
+          <label>Loan Tenure (Years)</label>
+          <input type="number" id="car-tenure" min="1" value="5">
+        </div>
+        
+        <div class="form-group">
+          <label>Monthly Running (Km)</label>
+          <input type="number" id="car-km" min="0" value="1200">
+        </div>
+        
+        <div class="form-group">
+          <label>Fuel Type</label>
+          <select id="car-fuel">
+            <option value="10">Petrol (₹10/km)</option>
+            <option value="5">Diesel (₹5/km)</option>
+            <option value="3">CNG (₹3/km)</option>
+            <option value="3">EV (₹3/km)</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Monthly Maintenance (₹)</label>
+          <input type="number" id="car-maint" min="0" value="1500">
+        </div>
+        
+        <div class="form-group">
+          <label>Expected SIP Return (%)</label>
+          <input type="number" id="car-siprate" min="0" step="0.1" value="13">
+        </div>
+      </div>
+
+      <button class="btn" onclick="calculateCarSIP()">
+        <i class="fas fa-calculator"></i> Compare Options
+      </button>
+
       <div class="result" id="car-result"></div>
-      <canvas id="car-chart" height="110"></canvas>
+      <div class="chart-container">
+        <canvas id="car-chart" height="400"></canvas>
+      </div>
     </div>
 
     <!-- Smart Car Loan Payoff Calculator -->
     <div class="calculator" id="smart-carloan" style="display:none;">
-      <h2>How To Smartly Pay Car Loan</h2>
-      <label>Loan Amount (₹)
-        <input type="number" id="sc-loan" min="0" value="700000">
-      </label>
-      <label>Loan Tenure (Years)
-        <input type="number" id="sc-tenure" min="1" value="5">
-      </label>
-      <label>Interest Rate (%)
-        <input type="number" id="sc-rate" min="0" value="9">
-      </label>
-      <label>After how many years do you get a lump sum? (years)
-        <input type="number" id="sc-lumpsum-years" min="1" value="2">
-      </label>
-      <label>Lump Sum Amount Available (₹)
-        <input type="number" id="sc-lumpsum" min="0" value="200000">
-      </label>
-      <label>Expected Mutual Fund Return (%)
-        <input type="number" id="sc-mfreturn" min="0" value="13">
-      </label>
-      <button class="btn" onclick="calculateSmartCarLoan()">Calculate</button>
+      <h2><i class="fas fa-brain"></i> Smart Car Loan Payoff Strategy</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Loan Amount (₹)</label>
+          <input type="number" id="sc-loan" min="0" value="700000">
+        </div>
+        
+        <div class="form-group">
+          <label>Loan Tenure (Years)</label>
+          <input type="number" id="sc-tenure" min="1" value="5">
+        </div>
+        
+        <div class="form-group">
+          <label>Interest Rate (%)</label>
+          <input type="number" id="sc-rate" min="0" step="0.1" value="9">
+        </div>
+        
+        <div class="form-group">
+          <label>Lump Sum After (Years)</label>
+          <input type="number" id="sc-lumpsum-years" min="1" value="2">
+        </div>
+        
+        <div class="form-group">
+          <label>Lump Sum Amount (₹)</label>
+          <input type="number" id="sc-lumpsum" min="0" value="200000">
+        </div>
+        
+        <div class="form-group">
+          <label>Expected MF Return (%)</label>
+          <input type="number" id="sc-mfreturn" min="0" step="0.1" value="13">
+        </div>
+      </div>
+
+      <button class="btn" onclick="calculateSmartCarLoan()">
+        <i class="fas fa-calculator"></i> Analyze Strategy
+      </button>
+
       <div class="result" id="sc-result"></div>
-      <canvas id="sc-chart" height="110"></canvas>
+      <div class="chart-container">
+        <canvas id="sc-chart" height="400"></canvas>
+      </div>
     </div>
-  </main>
+  </div>
+
   <footer>
-    &copy; 2025 [Your Name]. Financial calculators for Indian users.<br>
-    <small>Disclaimer: Calculators are for informational purposes only. Returns assumed are not guaranteed.</small>
+    <div class="container">
+      <div class="footer-content">
+        <p>&copy; 2025 Advanced Financial Calculators. Designed for smart investors.</p>
+        <div class="disclaimer">
+          <strong>Disclaimer:</strong> These calculators are for informational purposes only. 
+          Past performance does not guarantee future results. Consult with a financial advisor 
+          before making investment decisions.
+        </div>
+      </div>
+    </div>
   </footer>
+
   <script>
-    // TAB NAVIGATION
-    function switchTab(id, el) {
-      document.querySelectorAll('.calculator').forEach(d=>d.style.display='none');
-      document.getElementById(id).style.display='block';
-      document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
-      el.classList.add('active');
+    // Global chart variables
+    let sipChart, emiChart, ciChart, hlChart, carChart, scChart;
+
+    // Tab switching function
+    function switchTab(id, element) {
+      document.querySelectorAll('.calculator').forEach(calc => calc.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+      
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
     }
 
-    // --- SIP Calculator ---
-    let sipChart;
+    // Step-up toggle function
+    function toggleStepUp() {
+      const toggle = document.getElementById('stepup-toggle');
+      const section = document.getElementById('stepup-section');
+      
+      toggle.classList.toggle('active');
+      section.classList.toggle('active');
+    }
+
+    // Format currency
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(amount);
+    }
+
+    // Enhanced SIP Calculator
     function calculateSIP() {
-      const amt = +document.getElementById('sip-amount').value;
+      const initial = +document.getElementById('sip-initial').value || 0;
+      const monthly = +document.getElementById('sip-amount').value;
       const rate = +document.getElementById('sip-rate').value / 100 / 12;
       const years = +document.getElementById('sip-years').value;
-      const n = years * 12;
-      let corpus = [], labels = [], value = 0;
-      for (let i = 1; i <= n; i++) {
-          value = value * (1 + rate) + amt;
-          if (i % 12 === 0) {
-              corpus.push(Math.round(value));
-              labels.push('Year ' + (i / 12));
-          }
+      const stepUpEnabled = document.getElementById('stepup-toggle').classList.contains('active');
+      const stepUpPercent = stepUpEnabled ? (+document.getElementById('sip-stepup').value / 100) : 0;
+      
+      let corpus = initial;
+      let totalInvested = initial;
+      let currentMonthly = monthly;
+      let corpusData = [], investedData = [], labels = [];
+      
+      for (let year = 1; year <= years; year++) {
+        for (let month = 1; month <= 12; month++) {
+          corpus = corpus * (1 + rate) + currentMonthly;
+          totalInvested += currentMonthly;
+        }
+        
+        // Annual step-up
+        if (stepUpEnabled && year < years) {
+          currentMonthly = currentMonthly * (1 + stepUpPercent);
+        }
+        
+        corpusData.push(Math.round(corpus));
+        investedData.push(Math.round(totalInvested));
+        labels.push(`Year ${year}`);
       }
-      document.getElementById('sip-result').innerHTML = `Maturity Amount: <b>₹${Math.round(value).toLocaleString()}</b> <br><span style="font-weight:normal;">(Total Invested: ₹${(amt*n).toLocaleString()})</span>`;
+      
+      const returns = corpus - totalInvested;
+      const percentage = ((returns / totalInvested) * 100).toFixed(1);
+      
+      // Update results
+      document.getElementById('sip-corpus').textContent = formatCurrency(corpus);
+      document.getElementById('sip-invested').textContent = formatCurrency(totalInvested);
+      document.getElementById('sip-returns').textContent = formatCurrency(returns);
+      document.getElementById('sip-percentage').textContent = `${percentage}%`;
+      document.getElementById('sip-results').style.display = 'grid';
+      
+      // Create chart
       if (sipChart) sipChart.destroy();
       sipChart = new Chart(document.getElementById('sip-chart').getContext('2d'), {
-        type:'line',
-        data:{labels,datasets:[{label:'SIP Corpus',data:corpus,borderColor:'#10cfc9',backgroundColor:'rgba(16,207,201,0.18)',fill:true}]},
-        options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Corpus Value',
+            data: corpusData,
+            borderColor: 'rgba(79, 172, 254, 1)',
+            backgroundColor: 'rgba(79, 172, 254, 0.1)',
+            fill: true,
+            tension: 0.4
+          }, {
+            label: 'Total Invested',
+            data: investedData,
+            borderColor: 'rgba(245, 87, 108, 1)',
+            backgroundColor: 'rgba(245, 87, 108, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: 'white' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
       });
     }
 
-    // --- EMI Calculator ---
-    let emiChart;
+    // Enhanced EMI Calculator
     function calculateEMI() {
       const principal = +document.getElementById('emi-principal').value;
       const annualRate = +document.getElementById('emi-rate').value;
       const years = +document.getElementById('emi-years').value;
-      const r = annualRate/12/100;
-      const n = years*12;
-      const emi = r === 0 ? principal/n : principal*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
-      let outPrincipal = principal, totalInt = 0, principalPaid=0, interestArr=[], principalArr=[], labels=[];
-      for(let i=1; i<=n; i++){
-        let interestComponent = outPrincipal * r;
-        let principalComponent = emi - interestComponent;
-        outPrincipal -= principalComponent;
-        principalPaid += principalComponent;
-        totalInt += interestComponent;
-        if(i%12 === 0){
-          interestArr.push(+totalInt.toFixed(0));
-          principalArr.push(+principalPaid.toFixed(0));
-          labels.push("Year "+ (i/12));
+      const r = annualRate / 12 / 100;
+      const n = years * 12;
+      
+      const emi = r === 0 ? principal / n : principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+      const totalPayment = emi * n;
+      const totalInterest = totalPayment - principal;
+      
+      let outstandingPrincipal = principal;
+      let cumulativeInterest = 0;
+      let cumulativePrincipal = 0;
+      let interestData = [], principalData = [], labels = [];
+      
+      for (let i = 1; i <= n; i++) {
+        const interestComponent = outstandingPrincipal * r;
+        const principalComponent = emi - interestComponent;
+        
+        outstandingPrincipal -= principalComponent;
+        cumulativeInterest += interestComponent;
+        cumulativePrincipal += principalComponent;
+        
+        if (i % 12 === 0) {
+          interestData.push(Math.round(cumulativeInterest));
+          principalData.push(Math.round(cumulativePrincipal));
+          labels.push(`Year ${i / 12}`);
         }
       }
-      document.getElementById('emi-result').innerHTML =
-        `Monthly EMI: <b>₹${emi.toLocaleString(undefined,{maximumFractionDigits:2})}</b><br><span style="font-weight:normal;">Total Payment: ₹${(emi*n).toLocaleString(undefined)}<br>Interest: ₹${(emi*n-principal).toLocaleString(undefined)}</span>`;
-      if(emiChart) emiChart.destroy();
-      emiChart = new Chart(document.getElementById('emi-chart').getContext('2d'),{
-        type:'bar',
-        data:{labels,datasets:[
-          {label:'Cumulative Principal Paid',data:principalArr,backgroundColor:'#10cfc9'},
-          {label:'Cumulative Interest Paid',data:interestArr,backgroundColor:'#ffcccb'},
-        ]},
-        options:{scales:{y:{beginAtZero:true}},plugins:{legend:{display:true}}}
+      
+      // Update results
+      document.getElementById('emi-amount').textContent = formatCurrency(emi);
+      document.getElementById('emi-total').textContent = formatCurrency(totalPayment);
+      document.getElementById('emi-interest').textContent = formatCurrency(totalInterest);
+      document.getElementById('emi-results').style.display = 'grid';
+      
+      // Create chart
+      if (emiChart) emiChart.destroy();
+      emiChart = new Chart(document.getElementById('emi-chart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Principal Paid',
+            data: principalData,
+            backgroundColor: 'rgba(79, 172, 254, 0.8)',
+            borderColor: 'rgba(79, 172, 254, 1)',
+            borderWidth: 1
+          }, {
+            label: 'Interest Paid',
+            data: interestData,
+            backgroundColor: 'rgba(245, 87, 108, 0.8)',
+            borderColor: 'rgba(245, 87, 108, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: 'white' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              stacked: true,
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              stacked: true,
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
       });
     }
 
-    // --- Compound Interest Calculator ---
-    let ciChart;
+    // Enhanced Compound Interest Calculator
     function calculateCI() {
       const principal = +document.getElementById('ci-principal').value;
-      const rate = +document.getElementById('ci-rate').value/100;
+      const rate = +document.getElementById('ci-rate').value / 100;
       const years = +document.getElementById('ci-years').value;
-      const freq = +document.getElementById('ci-frequency').value;
-      let values = [], labels = [], amount = 0;
-      for(let y=1;y<=years;y++){
-        amount = principal * Math.pow((1+rate/freq),freq*y);
-        values.push(amount.toFixed(0)); labels.push('Year '+y);
+      const frequency = +document.getElementById('ci-frequency').value;
+      
+      let values = [], labels = [];
+      
+      for (let year = 1; year <= years; year++) {
+        const amount = principal * Math.pow((1 + rate / frequency), frequency * year);
+        values.push(Math.round(amount));
+        labels.push(`Year ${year}`);
       }
-      document.getElementById('ci-result').innerHTML =
-        `Future Value: <b>₹${(+amount).toLocaleString(undefined,{maximumFractionDigits:2})}</b><br><span style="font-weight:normal;">Total Gain: ₹${(amount-principal).toLocaleString(undefined,{maximumFractionDigits:2})}</span>`;
-      if(ciChart) ciChart.destroy();
-      ciChart = new Chart(document.getElementById('ci-chart').getContext('2d'),{
-        type:'line',
-        data:{labels,datasets:[{label:'Compound Growth',data:values,borderColor:'#2494e2',backgroundColor:'rgba(36,148,226,0.15)',fill:true}]},
-        options:{scales:{y:{beginAtZero:true}},plugins:{legend:{display:false}}}
+      
+      const finalAmount = values[values.length - 1];
+      const totalGain = finalAmount - principal;
+      
+      // Update results
+      document.getElementById('ci-future').textContent = formatCurrency(finalAmount);
+      document.getElementById('ci-gain').textContent = formatCurrency(totalGain);
+      document.getElementById('ci-results').style.display = 'grid';
+      
+      // Create chart
+      if (ciChart) ciChart.destroy();
+      ciChart = new Chart(document.getElementById('ci-chart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Compound Growth',
+            data: values,
+            borderColor: 'rgba(79, 172, 254, 1)',
+            backgroundColor: 'rgba(79, 172, 254, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
       });
     }
 
-    // --- Home Loan vs SIP Calculator MODIFIED to add Down Payment as initial SIP ---
-    let hlChart;
+    // Home Loan vs SIP Calculator
     function calculateHomeSIP() {
       const homePrice = +document.getElementById('hl-homeprice').value;
-      const down = +document.getElementById('hl-down').value;
-      const loanAmt = +document.getElementById('hl-loan').value;
-      const rate = +document.getElementById('hl-rate').value;
+      const downPayment = +document.getElementById('hl-down').value;
+      const loanAmount = +document.getElementById('hl-loan').value;
+      const loanRate = +document.getElementById('hl-rate').value;
       const tenure = +document.getElementById('hl-tenure').value;
-      const rentInit = +document.getElementById('hl-rent').value;
-      const rentInc = +document.getElementById('hl-rentinc').value;
-      const sipAnnualRate = +document.getElementById('hl-siprate').value/100;
-      const appreciation = +document.getElementById('hl-appreciation').value/100;
-
-      const sipRate = sipAnnualRate / 12;
-      const r = rate/12/100;
-      const n = tenure*12;
-      let emi = r==0?loanAmt/n : loanAmt*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
-
-      let homeValueArr = [], rentArr = [], sipArr = [], emiArr = [], netSipArr = [], labels=[];
-      let homeValue = homePrice, currRent = rentInit;
-      let sipBalance = down; // key: include down payment as lumpsum SIP upfront
-      let totalRent = 0, totalEmi = 0, totalSipInvested = down;
-      for(let y=1;y<=tenure;y++){
-        for(let m=0;m<12;m++){
-          let diff = emi - currRent;
-          if(diff<0) diff=0;
-          sipBalance = sipBalance*(1+sipRate) + diff;
-          totalSipInvested += diff;
-          totalRent += currRent;
+      const initialRent = +document.getElementById('hl-rent').value;
+      const rentHike = +document.getElementById('hl-rentinc').value;
+      const sipReturn = +document.getElementById('hl-siprate').value / 100;
+      const appreciation = +document.getElementById('hl-appreciation').value / 100;
+      
+      // Calculate EMI
+      const r = loanRate / 12 / 100;
+      const n = tenure * 12;
+      const emi = r === 0 ? loanAmount / n : loanAmount * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+      
+      // Calculate projections
+      let homeValue = homePrice;
+      let currentRent = initialRent;
+      let sipBalance = downPayment; // Start with down payment in SIP
+      let totalRent = 0;
+      let totalEmi = 0;
+      
+      let homeValueData = [], sipData = [], rentData = [], labels = [];
+      
+      for (let year = 1; year <= tenure; year++) {
+        for (let month = 1; month <= 12; month++) {
+          const emiRentDiff = Math.max(0, emi - currentRent);
+          sipBalance = sipBalance * (1 + sipReturn / 12) + emiRentDiff;
+          totalRent += currentRent;
           totalEmi += emi;
         }
-        currRent *= (1+rentInc/100);
-        homeValue *= (1+appreciation);
-        homeValueArr.push(+homeValue.toFixed(0));
-        rentArr.push(+totalRent.toFixed(0));
-        sipArr.push(+sipBalance.toFixed(0));
-        emiArr.push(+totalEmi.toFixed(0));
-        netSipArr.push(+sipBalance - +totalRent);
-        labels.push('Year '+y);
+        
+        currentRent *= (1 + rentHike / 100);
+        homeValue *= (1 + appreciation);
+        
+        homeValueData.push(Math.round(homeValue));
+        sipData.push(Math.round(sipBalance));
+        rentData.push(Math.round(totalRent));
+        labels.push(`Year ${year}`);
       }
-      const netHomeBuyWealth = homeValueArr[homeValueArr.length-1] - (totalEmi+down);
-      const netRentSipWealth = sipArr[sipArr.length-1] - totalRent;
+      
+      const netHomeBuyWealth = homeValue - totalEmi;
+      const netRentSipWealth = sipBalance - totalRent;
+      
       document.getElementById('hl-result').innerHTML = `
-        <b>Buy Option:</b> <br>
-        <span style='font-weight:normal'>Home Value after <b>${tenure} years</b>: ₹${(+homeValueArr[homeValueArr.length-1]).toLocaleString()}</span><br>
-        <span style='font-weight:normal'>Total Paid (EMIs + Downpayment): ₹${(+totalEmi+down).toLocaleString()}</span>
-        <br><br>
-        <b>Rent + SIP Option (with down payment invested as lumpsum in SIP):</b> <br>
-        <span style='font-weight:normal'>SIP Corpus: ₹${sipArr[sipArr.length-1].toLocaleString()}</span><br>
-        <span style='font-weight:normal'>Total Rent Paid: ₹${totalRent.toLocaleString()}</span>
-        <br><br>
-        <b>Net Wealth after ${tenure} yrs (Buy): <span style='color:#1ac888'>₹${netHomeBuyWealth.toLocaleString()}</span></b><br>
-        <b>Net Wealth after ${tenure} yrs (Rent+SIP): <span style="color:#e28a24">₹${netRentSipWealth.toLocaleString()}</span></b>
+        <div class="results-container">
+          <div class="result-card">
+            <h3>Buy Option Net Wealth</h3>
+            <div class="result-value">${formatCurrency(netHomeBuyWealth)}</div>
+            <div class="result-subtitle">Home Value - Total EMI</div>
+          </div>
+          <div class="result-card">
+            <h3>Rent + SIP Net Wealth</h3>
+            <div class="result-value">${formatCurrency(netRentSipWealth)}</div>
+            <div class="result-subtitle">SIP Value - Total Rent</div>
+          </div>
+          <div class="result-card">
+            <h3>Better Option</h3>
+            <div class="result-value">${netHomeBuyWealth > netRentSipWealth ? 'Buy Home' : 'Rent + SIP'}</div>
+            <div class="result-subtitle">Higher Net Wealth</div>
+          </div>
+        </div>
       `;
-      if(hlChart) hlChart.destroy();
-      hlChart = new Chart(document.getElementById('hl-chart').getContext('2d'),{
-        type:'line',
-        data:{
-          labels:labels,
-          datasets:[
-            {label:'Home Value',data:homeValueArr,borderColor:'#5081fc',backgroundColor:'rgba(80,129,252,0.12)',fill:false,pointRadius:2},
-            {label:'SIP Corpus',data:sipArr,borderColor:'#1ac888',backgroundColor:'rgba(26,200,136,0.12)',fill:false,pointRadius:2},
-            {label:'Cumulative Rent Paid',data:rentArr,borderColor:'#e28a24',backgroundColor:'rgba(226,138,36,0.11)',fill:false,borderDash:[5,5],pointRadius:0},
-          ]
+      
+      // Create chart
+      if (hlChart) hlChart.destroy();
+      hlChart = new Chart(document.getElementById('hl-chart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Home Value',
+            data: homeValueData,
+            borderColor: 'rgba(79, 172, 254, 1)',
+            backgroundColor: 'rgba(79, 172, 254, 0.1)',
+            fill: false,
+            tension: 0.4
+          }, {
+            label: 'SIP Corpus',
+            data: sipData,
+            borderColor: 'rgba(16, 207, 201, 1)',
+            backgroundColor: 'rgba(16, 207, 201, 0.1)',
+            fill: false,
+            tension: 0.4
+          }, {
+            label: 'Cumulative Rent',
+            data: rentData,
+            borderColor: 'rgba(245, 87, 108, 1)',
+            backgroundColor: 'rgba(245, 87, 108, 0.1)',
+            fill: false,
+            borderDash: [5, 5],
+            tension: 0.4
+          }]
         },
-        options:{
-          plugins:{legend:{display:true}},
-          scales:{y:{beginAtZero:true}}
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: 'white' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
         }
       });
     }
 
-    // --- Car Loan vs SIP Calculator with chart ---
-    let carChart;
+    // Car Loan vs SIP Calculator
     function calculateCarSIP() {
       const carPrice = +document.getElementById('car-price').value;
-      const loanAmt = +document.getElementById('car-loan').value;
+      const loanAmount = +document.getElementById('car-loan').value;
       const rate = +document.getElementById('car-rate').value;
       const tenure = +document.getElementById('car-tenure').value;
       const kmMonth = +document.getElementById('car-km').value;
       const fuelRate = +document.getElementById('car-fuel').value;
-      const maint = +document.getElementById('car-maint').value;
-      const sipRate = +document.getElementById('car-siprate').value/100/12;
-
-      const months = tenure*12;
-      const r = rate/12/100;
-      const emi = r === 0 ? loanAmt/months : loanAmt*r*Math.pow(1+r,months)/(Math.pow(1+r,months)-1);
-      const totalFuel = kmMonth * fuelRate * months;
-      const totalMaint = maint * months;
-      const downpayment = carPrice-loanAmt;
-      const totalOutgo = emi*months + totalFuel + totalMaint + downpayment;
+      const maintenance = +document.getElementById('car-maint').value;
+      const sipReturn = +document.getElementById('car-siprate').value / 100 / 12;
+      
+      const months = tenure * 12;
+      const r = rate / 12 / 100;
+      const emi = r === 0 ? loanAmount / months : loanAmount * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+      
+      const downPayment = carPrice - loanAmount;
+      const monthlyFuel = kmMonth * fuelRate;
+      const totalMonthlyOutgo = emi + monthlyFuel + maintenance;
+      
       let sipBalance = 0;
-      let dataArr = [], altArr = [], labels=[];
-      for(let m=1; m<=months; m++) {
-        let outgo = emi + kmMonth*fuelRate + maint;
-        sipBalance = sipBalance * (1 + sipRate) + outgo;
-        if(m%12===0){
-          dataArr.push((emi*m+kmMonth*fuelRate*m+maint*m+downpayment).toFixed(0));
-          altArr.push(sipBalance.toFixed(0));
-          labels.push("Year "+(m/12));
+      let cumulativeCarCost = downPayment;
+      let carCostData = [], sipData = [], labels = [];
+      
+      for (let month = 1; month <= months; month++) {
+        sipBalance = sipBalance * (1 + sipReturn) + totalMonthlyOutgo;
+        cumulativeCarCost += totalMonthlyOutgo;
+        
+        if (month % 12 === 0) {
+          carCostData.push(Math.round(cumulativeCarCost));
+          sipData.push(Math.round(sipBalance));
+          labels.push(`Year ${month / 12}`);
         }
       }
+      
+      const totalCarCost = cumulativeCarCost;
+      const opportunityCost = sipBalance - totalCarCost;
+      
       document.getElementById('car-result').innerHTML = `
-        <b>Car Ownership Outgo (over ${tenure} years):</b><br>
-        EMI Paid: ₹${(emi*months).toLocaleString(undefined,{maximumFractionDigits:0})}<br>
-        Fuel: ₹${totalFuel.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
-        Maintenance: ₹${totalMaint.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
-        Downpayment: ₹${downpayment.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
-        <b>Total Outgo:</b> ₹${totalOutgo.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
-        <br>
-        <b>Alternative SIP Value (if all these costs are invested):</b><br>
-        SIP Corpus: ₹${sipBalance.toLocaleString(undefined,{maximumFractionDigits:0})}
+        <div class="results-container">
+          <div class="result-card">
+            <h3>Total Car Cost</h3>
+            <div class="result-value">${formatCurrency(totalCarCost)}</div>
+            <div class="result-subtitle">All expenses included</div>
+          </div>
+          <div class="result-card">
+            <h3>Alternative SIP Value</h3>
+            <div class="result-value">${formatCurrency(sipBalance)}</div>
+            <div class="result-subtitle">If invested instead</div>
+          </div>
+          <div class="result-card">
+            <h3>Opportunity Cost</h3>
+            <div class="result-value">${formatCurrency(opportunityCost)}</div>
+            <div class="result-subtitle">Potential wealth lost</div>
+          </div>
+        </div>
       `;
-      if(carChart) carChart.destroy();
+      
+      // Create chart
+      if (carChart) carChart.destroy();
       carChart = new Chart(document.getElementById('car-chart').getContext('2d'), {
-        type:'line',
-        data:{labels,datasets:[
-          {label:'Cumulative Spend on Car (Ownership)',data:dataArr,borderColor:'#e2747c',backgroundColor:'rgba(226,116,124,0.11)',fill:true,pointRadius:1},
-          {label:'Alternate SIP Corpus (if not bought)',data:altArr,borderColor:'#10cfc9',backgroundColor:'rgba(16,207,201,0.15)',fill:true,pointRadius:1},
-        ]},
-        options:{scales:{y:{beginAtZero:true}},plugins:{legend:{display:true}}}
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Car Ownership Cost',
+            data: carCostData,
+            borderColor: 'rgba(245, 87, 108, 1)',
+            backgroundColor: 'rgba(245, 87, 108, 0.1)',
+            fill: true,
+            tension: 0.4
+          }, {
+            label: 'Alternative SIP Value',
+            data: sipData,
+            borderColor: 'rgba(16, 207, 201, 1)',
+            backgroundColor: 'rgba(16, 207, 201, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              labels: { color: 'white' }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
       });
     }
 
-    // --- Smart Car Loan Payoff Calculator with chart ---
-    let scChart;
+    // Smart Car Loan Calculator
     function calculateSmartCarLoan() {
-      const loanAmt = +document.getElementById('sc-loan').value;
+      const loanAmount = +document.getElementById('sc-loan').value;
       const tenure = +document.getElementById('sc-tenure').value;
       const rate = +document.getElementById('sc-rate').value;
-      const lumpYears = +document.getElementById('sc-lumpsum-years').value;
-      const lumpAmt = +document.getElementById('sc-lumpsum').value;
-      const mfReturn = +document.getElementById('sc-mfreturn').value/100/12;
-
-      const n = tenure*12;
-      const r = rate/12/100;
-      const emi = r === 0 ? loanAmt/n : loanAmt*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
-
-      const paidMonths = lumpYears*12;
-      let outstanding = loanAmt;
-      for(let i=0;i<paidMonths;i++) {
-        let interest = outstanding * r;
-        let principal = emi - interest;
+      const lumpSumYears = +document.getElementById('sc-lumpsum-years').value;
+      const lumpSumAmount = +document.getElementById('sc-lumpsum').value;
+      const mfReturn = +document.getElementById('sc-mfreturn').value / 100 / 12;
+      
+      const n = tenure * 12;
+      const r = rate / 12 / 100;
+      const emi = r === 0 ? loanAmount / n : loanAmount * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+      
+      // Calculate outstanding after lump sum years
+      const paidMonths = lumpSumYears * 12;
+      let outstanding = loanAmount;
+      
+      for (let i = 0; i < paidMonths; i++) {
+        const interest = outstanding * r;
+        const principal = emi - interest;
         outstanding -= principal;
       }
+      
+      // Option 1: Prepay loan
+      const remainingEMIs = n - paidMonths;
+      const prepayAmount = Math.min(lumpSumAmount, outstanding);
+      const newOutstanding = outstanding - prepayAmount;
+      
+      // Option 2: Invest in MF and use SWP
       const remainingMonths = n - paidMonths;
-      let mfBalance = lumpAmt, mfBalHistoric = [];
+      let mfBalance = lumpSumAmount;
+      let mfBalanceData = [], labels = [];
       let exhaustedAt = null;
-      for(let i=0;i<remainingMonths;i++) {
+      
+      for (let i = 0; i < remainingMonths; i++) {
         mfBalance = mfBalance * (1 + mfReturn) - emi;
-        mfBalHistoric.push(mfBalance>0?+mfBalance.toFixed(0):0);
-        if (!exhaustedAt && mfBalance<0) exhaustedAt = i+1;
-      }
-      document.getElementById('sc-result').innerHTML = `
-        <b>Option 1: Use Lump Sum to Prepay Loan after ${lumpYears} years</b><br>
-        <b>Outstanding Principal after ${lumpYears} years:</b> ₹${outstanding.toLocaleString(undefined,{maximumFractionDigits:0})}<br>
-        <hr>
-        <b>Option 2: Invest Lump Sum in Mutual Fund, use SWP for EMI</b><br>
-        ${
-          exhaustedAt
-            ? `<b>Corpus exhausted after ${exhaustedAt} EMIs (months)!<br>SWP couldn't fund the EMIs for entire remaining period.</b>`
-            : `<b>Corpus after all EMIs paid: ₹${mfBalance.toLocaleString(undefined,{maximumFractionDigits:0})}</b>`
+        mfBalanceData.push(Math.max(0, Math.round(mfBalance)));
+        labels.push(`Month ${i + 1}`);
+        
+        if (!exhaustedAt && mfBalance < 0) {
+          exhaustedAt = i + 1;
         }
+      }
+      
+      document.getElementById('sc-result').innerHTML = `
+        <div class="results-container">
+          <div class="result-card">
+            <h3>Option 1: Prepay Loan</h3>
+            <div class="result-value">${formatCurrency(prepayAmount)}</div>
+            <div class="result-subtitle">Prepayment amount</div>
+          </div>
+          <div class="result-card">
+            <h3>New Outstanding</h3>
+            <div class="result-value">${formatCurrency(newOutstanding)}</div>
+            <div class="result-subtitle">After prepayment</div>
+          </div>
+          <div class="result-card">
+            <h3>Option 2: MF + SWP</h3>
+            <div class="result-value">${exhaustedAt ? 'Exhausted' : formatCurrency(mfBalance)}</div>
+            <div class="result-subtitle">${exhaustedAt ? `After ${exhaustedAt} months` : 'Final balance'}</div>
+          </div>
+        </div>
       `;
-      let monthsArr = [];
-      for(let k=1; k<=mfBalHistoric.length; k++) monthsArr.push('Month '+k);
-      if(scChart) scChart.destroy();
-      scChart = new Chart(document.getElementById('sc-chart').getContext('2d'),{
-        type:'line',
-        data:{
-          labels: monthsArr,
-          datasets: [
-            {label:'MF Corpus During SWP', data: mfBalHistoric, borderColor:'#1ac888', backgroundColor:'rgba(26,200,136,0.06)',fill:true,pointRadius:0.8}
-          ]
+      
+      // Create chart
+      if (scChart) scChart.destroy();
+      scChart = new Chart(document.getElementById('sc-chart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'MF Balance During SWP',
+            data: mfBalanceData,
+            borderColor: 'rgba(16, 207, 201, 1)',
+            backgroundColor: 'rgba(16, 207, 201, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
         },
-        options:{scales:{y:{beginAtZero:true}},plugins:{legend:{display:false}}}
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            },
+            x: {
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255, 255, 255, 0.1)' }
+            }
+          }
+        }
       });
     }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set Chart.js defaults for dark theme
+      Chart.defaults.color = 'white';
+      Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+      Chart.defaults.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+      
+      // Calculate SIP by default
+      calculateSIP();
+    });
   </script>
 </body>
 </html>
