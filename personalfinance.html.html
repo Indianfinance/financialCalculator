@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Indian Personal Finance Planner v3.2 – No Tax</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth}
+    body {
+      font-family:'Poppins',sans-serif;
+      background:linear-gradient(120deg,#141E30 0%,#243B55 100%);
+      min-height:100vh;display:flex;align-items:center;justify-content:center;padding:25px;color:#333;
+    }
+    .container {
+      width:100%;max-width:1400px;background:rgba(255,255,255,.9);
+      border-radius:20px;box-shadow:0 25px 60px rgba(0,0,0,.25);overflow:hidden;
+      backdrop-filter:blur(14px);animation:pop 0.8s cubic-bezier(.25,.8,.25,1);
+    }
+    @keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+    .header {
+      text-align:center;color:#fff;padding:45px 15px;
+      background:linear-gradient(45deg,#ff512f,#dd2476,#24c6dc,#514a9d);
+      background-size:400% 400%;animation:gradient 12s ease infinite;
+    }
+    @keyframes gradient{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    .header h1{font-size:2.6rem;font-weight:600}
+    .header p{font-size:1.05rem;opacity:.95;margin-top:8px}
+    .content{display:grid;grid-template-columns:1fr 1fr;min-height:80vh}
+    @media(max-width:900px){.content{grid-template-columns:1fr}}
+    .form-section{
+      padding:35px 30px;border-right:1px solid rgba(0,0,0,.07);
+      overflow-y:auto;max-height:85vh;
+    }
+    .section-title{
+      font-size:1.25rem;font-weight:600;color:#0077FF;
+      margin:30px 0 18px;display:flex;align-items:center;gap:8px;
+    }
+    .section-title::before{
+      content:"";width:24px;height:3px;background:#0077FF;border-radius:20px;
+    }
+    .form-group{margin-bottom:22px}
+    .form-group label{display:block;font-weight:500;margin-bottom:6px}
+    .form-group input,.form-group select{
+      width:100%;padding:12px 14px;font-size:15px;border-radius:10px;
+      border:2px solid #e3e6f0;outline:none;transition:.25s;border-right-width:4px;
+    }
+    .form-group input:focus,.form-group select:focus{
+      border-color:#0077FF;box-shadow:0 0 0 4px rgba(0,119,255,.12);
+    }
+    .live-validation{font-size:11.5px;margin-top:4px;font-weight:500}
+    .validation-pass{color:#3fba4c}.validation-warning{color:#ff9500}
+    .calculate-btn{
+      width:100%;padding:15px;margin-top:8px;border:none;border-radius:12px;
+      font-size:17px;font-weight:600;color:#fff;cursor:pointer;
+      background:linear-gradient(135deg,#0077FF,#1BCBFF);
+      transition:.3s;box-shadow:0 15px 25px rgba(0,119,255,.25);
+    }
+    .calculate-btn:hover{transform:translateY(-2px)}
+    .results-section{
+      padding:35px 32px;background:#F6F8FC;
+      overflow-y:auto;max-height:85vh;
+    }
+    .card{
+      background:#fff;border-radius:18px;padding:24px;margin-bottom:24px;
+      box-shadow:0 12px 28px rgba(0,0,0,.08);
+    }
+    .card h3{font-size:1.18rem;font-weight:600;color:#0077FF;margin-bottom:16px}
+    .chart-container{
+      position:relative;
+      width:100%;
+      height:300px;
+      margin-top:12px;
+    }
+    .cash-table{width:100%;border-collapse:collapse;font-size:.9rem}
+    .cash-table th,.cash-table td{
+      padding:9px 12px;border:1px solid #e3e3e3;text-align:center;
+    }
+    .cash-table th{background:#f5f7fb;font-weight:600}
+    .cash-table tr:nth-child(even){background:#fafbfd}
+    .negative-cash{background:#ffeef0!important;color:#ff3b30;font-weight:600}
+    .positive-cash{background:#e6f9e8!important;color:#3fba4c;font-weight:600}
+    .info-banner,.warn-banner{
+      padding:14px 18px;border-radius:12px;font-size:.92rem;
+      margin-bottom:22px;display:flex;gap:8px;align-items:center;
+    }
+    .info-banner{background:#E8F4FD;color:#0077FF}.warn-banner{background:#FFF5F5;color:#ff3b30}
+    .loading{
+      text-align:center;
+      padding:20px;
+      color:#666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>💰 Indian Personal Finance Planner v3.2</h1>
+      <p>Dynamic savings · Affordability guidance · Interactive charts (No Tax Calc)</p>
+    </div>
+    <div class="content">
+      <section class="form-section">
+        <form id="plannerForm" autocomplete="off">
+          <div class="section-title">👔 Income</div>
+          <div class="form-group">
+            <label for="salary">In-Hand Monthly Salary (₹)*</label>
+            <input type="number" id="salary" min="0" required value="50000">
+            <div class="live-validation" id="salaryHint"></div>
+          </div>
+          <div class="form-group">
+            <label for="hike">Annual Salary Hike (%)</label>
+            <input type="number" id="hike" value="10" step="0.1" min="0" max="50">
+          </div>
+          <div class="form-group">
+            <label for="extraIncome">Other Monthly Income (₹)</label>
+            <input type="number" id="extraIncome" min="0" value="5000">
+          </div>
+
+          <div class="section-title">🛒 Expenses</div>
+          <div class="form-group">
+            <label for="rent">Rent (₹)</label>
+            <input type="number" id="rent" min="0" value="15000">
+          </div>
+          <div class="form-group">
+            <label for="otherExp">Other Monthly Expenses (₹)</label>
+            <input type="number" id="otherExp" min="0" value="20000">
+            <div class="live-validation" id="expHint"></div>
+          </div>
+
+          <div class="section-title">📈 Macros</div>
+          <div class="form-group">
+            <label for="inflation">Inflation (%)</label>
+            <input type="number" id="inflation" value="5" step="0.5" min="0" max="10">
+          </div>
+
+          <div class="section-title">🚗 Car Plan</div>
+          <div class="form-group"><label for="carCost">Cost (₹)</label><input type="number" id="carCost" min="0" value="800000"></div>
+          <div class="form-group"><label for="carYear">Target Year</label><input type="number" id="carYear" min="2026" max="2050" value="2027"></div>
+          <div class="form-group"><label for="carDown">Down %</label><input type="number" id="carDown" value="20" min="0" max="100"></div>
+          <div class="form-group"><label for="carTen">Tenure (yrs)</label><input type="number" id="carTen" value="5" min="1" max="7"></div>
+          <div class="form-group"><label for="carRate">Interest (%)</label><input type="number" id="carRate" value="9" step="0.1" min="0" max="20"></div>
+
+          <div class="section-title">🏠 Home Plan</div>
+          <div class="form-group"><label for="homeCost">Cost (₹)</label><input type="number" id="homeCost" min="0" value="5000000"></div>
+          <div class="form-group"><label for="homeYear">Target Year</label><input type="number" id="homeYear" min="2026" max="2050" value="2030"></div>
+          <div class="form-group"><label for="homeDown">Down %</label><input type="number" id="homeDown" value="20" min="10" max="100"></div>
+          <div class="form-group"><label for="homeTen">Tenure (yrs)</label><input type="number" id="homeTen" value="20" min="5" max="30"></div>
+          <div class="form-group"><label for="homeRate">Interest (%)</label><input type="number" id="homeRate" value="7.5" step="0.1" min="0" max="15"></div>
+
+          <div class="section-title">🎯 Retirement</div>
+          <div class="form-group"><label for="ageNow">Current Age*</label><input type="number" id="ageNow" value="30" min="18" max="70" required></div>
+          <div class="form-group"><label for="ageRet">Retire Age*</label><input type="number" id="ageRet" value="60" min="40" max="80" required></div>
+          <div class="form-group"><label for="sip">Monthly SIP (₹)</label><input type="number" id="sip" min="0" value="10000"></div>
+
+          <button type="submit" class="calculate-btn">📊 Calculate & Graph</button>
+        </form>
+      </section>
+      <section class="results-section">
+        <div id="results">
+          <div class="card">
+            <h3>Welcome!</h3>
+            <p>Fill the form and press "Calculate & Graph" to view projections and interactive charts.</p>
+            <div class="info-banner">
+              ℹ️ Sample values are pre-filled for demonstration. Modify them as per your needs.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <script>
+    function waitForChart() {
+      return new Promise((resolve) => {
+        const checkChart = () => {
+          if (typeof Chart !== 'undefined') resolve();
+          else setTimeout(checkChart, 100);
+        };
+        checkChart();
+      });
+    }
+    const $ = id => document.getElementById(id);
+    const vF = id => parseFloat($(id).value) || 0;
+    const vI = id => parseInt($(id).value) || 0;
+
+    // Live validation for salary
+    $('salary').addEventListener('input', () => {
+      const s = vF('salary'), el = $('salaryHint');
+      el.textContent = s < 30000 ? 'Consider boosting income'
+                     : s < 60000 ? 'Comfortable baseline'
+                                 : 'Great in-hand salary';
+      el.className = 'live-validation validation-pass';
+    });
+
+    // Expense ratio live validation (no tax part)
+    ['otherExp','salary','rent','extraIncome'].forEach(id => 
+      $(id).addEventListener('input', () => {
+        const base = vF('salary') + vF('extraIncome') || 1;
+        const pct = ((vF('otherExp') + vF('rent')) / base) * 100;
+        $('expHint').textContent = `Expense Ratio ${pct.toFixed(1)}%`;
+        $('expHint').className = 'live-validation validation-pass';
+      })
+    );
+
+    const emi = (P, r, y) => {
+      const m = r/1200, n = y*12;
+      return m ? P*m*Math.pow(1+m,n)/(Math.pow(1+m,n)-1) : P/n;
+    };
+
+    let charts = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+      $('salary').dispatchEvent(new Event('input'));
+      $('otherExp').dispatchEvent(new Event('input'));
+    });
+
+    $('plannerForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      if (vI('ageRet') <= vI('ageNow')) {
+        alert('Retirement age must exceed current age');
+        return;
+      }
+      $('results').innerHTML = '<div class="card"><div class="loading">📊 Calculating and generating charts...</div></div>';
+      await waitForChart();
+      setTimeout(simulate, 500);
+    });
+
+    function simulate(){
+      const startYear = new Date().getFullYear();
+      const horizon = vI('ageRet') - vI('ageNow');
+
+      let salary = vF('salary'),
+          hike = vF('hike'),
+          extra  = vF('extraIncome'),
+          infl   = vF('inflation'),
+          rent   = vF('rent'),
+          fixed  = vF('otherExp'),
+          sip    = vF('sip');
+
+      const carCost = vF('carCost'), carYear = vI('carYear'),
+            carDown = vF('carDown')/100, carTen = vI('carTen'), carRate = vF('carRate'),
+            carEMI = carCost ? emi(carCost*(1-carDown), carRate, carTen) : 0;
+
+      const homeCost = vF('homeCost'), homeYear = vI('homeYear'),
+            homeDown = vF('homeDown')/100, homeTen = vI('homeTen'), homeRate = vF('homeRate'),
+            homeEMI = homeCost ? emi(homeCost*(1-homeDown), homeRate, homeTen) : 0;
+
+      let savings = 0, carOn = false, homeOn = false;
+      let labels = [], netArr = [], savArr = [];
+      let rows = '', minCash = {v: Infinity, y: startYear};
+
+      for (let i=0; i<horizon; i++){
+        const Y = startYear + i;
+        labels.push(Y);
+
+        if (Y === carYear && carCost) {
+          carOn = true;
+          savings -= carCost*carDown;
+        }
+        if (Y === homeYear && homeCost) {
+          homeOn = true;
+          savings -= homeCost*homeDown;
+          rent = 0;
+        }
+
+        const thisFixed = fixed * Math.pow(1+infl/100,i),
+              thisRent  = rent  * Math.pow(1+infl/100,i),
+              expMo     = thisFixed + thisRent + (carOn?carEMI:0) + (homeOn?homeEMI:0) + sip,
+              incMo     = salary + extra,
+              netYr     = (incMo - expMo) * 12;
+
+        savings += netYr;
+        netArr.push(netYr);
+        savArr.push(savings);
+        if (netYr < minCash.v) { minCash = {v: netYr, y: Y}; }
+
+        rows += `<tr>
+          <td>${Y}</td>
+          <td>₹${incMo.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+          <td>₹${expMo.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+          <td class="${netYr<0?'negative-cash':'positive-cash'}">₹${netYr.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+          <td>₹${savings.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+        </tr>`;
+
+        salary *= 1 + hike/100;
+        extra  *= 1 + hike/100;
+      }
+
+      renderResults(rows, labels, netArr, savArr, savings, minCash);
+    }
+
+    function renderResults(rows, labels, netArr, savArr, totalSav, minCash){
+      const out = $('results');
+      out.innerHTML = `
+        <div class="card">
+          <h3>📊 Key Metrics</h3>
+          <p><b>Total Savings at Retirement:</b> ₹${totalSav.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</p>
+          <p><b>Worst Cash-Flow Year (${minCash.y}):</b> ₹${minCash.v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</p>
+          <p><b>Years to Retirement:</b> ${labels.length} years</p>
+        </div>
+        
+        <div class="card">
+          <h3>💰 Accumulated Savings Over Time</h3>
+          <div class="chart-container"><canvas id="savingsChart"></canvas></div>
+        </div>
+        
+        <div class="card">
+          <h3>💸 Annual Net Cash-Flow</h3>
+          <div class="chart-container"><canvas id="cashflowChart"></canvas></div>
+        </div>
+        
+        <div class="card">
+          <h3>🥧 First-Year Budget Breakdown</h3>
+          <div class="chart-container"><canvas id="budgetChart"></canvas></div>
+        </div>
+        
+        <div class="card">
+          <h3>📋 Year-by-Year Projection</h3>
+          <div style="max-height:300px;overflow:auto;">
+            <table class="cash-table">
+              <tr><th>Year</th><th>Monthly Income</th><th>Monthly Expenses</th><th>Annual Net</th><th>Total Savings</th></tr>
+              ${rows}
+            </table>
+          </div>
+        </div>
+        
+        ${totalSav<0
+          ? '<div class="warn-banner">⚠️ Warning: Your savings turn negative! Consider reducing expenses or increasing income.</div>'
+          : '<div class="info-banner">✅ Great! You maintain positive savings throughout your career.</div>'}
+      `;
+
+      Object.values(charts).forEach(c => c?.destroy());
+      charts = {};
+
+      setTimeout(() => {
+        try {
+          const sCtx = $('savingsChart').getContext('2d');
+          charts.savings = new Chart(sCtx, {
+            type: 'line',
+            data: { labels, datasets: [{ label: 'Total Savings (₹)', data: savArr, borderColor: '#0077FF', backgroundColor: 'rgba(0,119,255,0.1)', borderWidth:3, fill:true, tension:0.4 }] },
+            options: {
+              responsive:true, maintainAspectRatio:false,
+              scales:{ y:{ beginAtZero:false, ticks:{ callback:v=>'₹'+(v/100000).toFixed(2)+'L' } } },
+              plugins:{ tooltip:{ callbacks:{ label:ctx=>'Savings: ₹'+ctx.parsed.y.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) } } }
+            }
+          });
+
+          const cCtx = $('cashflowChart').getContext('2d');
+          charts.cashflow = new Chart(cCtx, {
+            type: 'bar',
+            data: { labels, datasets: [{ label:'Annual Net Cash Flow (₹)', data:netArr, backgroundColor:netArr.map(v=>v>=0?'#3fba4c':'#ff3b30'), borderColor:netArr.map(v=>v>=0?'#2d8a39':'#d12b20'), borderWidth:1 }] },
+            options: {
+              responsive:true, maintainAspectRatio:false,
+              scales:{ y:{ beginAtZero:true, ticks:{ callback:v=>'₹'+(v/100000).toFixed(2)+'L' } } },
+              plugins:{ tooltip:{ callbacks:{ label:ctx=>'Net Flow: ₹'+ctx.parsed.y.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) } } }
+            }
+          });
+
+          const bCtx = $('budgetChart').getContext('2d');
+          const firstInc = vF('salary') + vF('extraIncome');
+          const firstExp = firstInc - (netArr[0]/12);
+          const firstSav = firstInc - firstExp;
+          charts.budget = new Chart(bCtx, {
+            type: 'doughnut',
+            data: { labels:['Expenses','Savings & Investments'], datasets:[{ data:[firstExp, firstSav], backgroundColor:['#ff6b6b','#4ecdc4'], borderColor:['#ff5252','#26a69a'], borderWidth:2 }] },
+            options: {
+              responsive:true, maintainAspectRatio:false,
+              plugins:{ tooltip:{ callbacks:{ label:ctx=>`${ctx.label}: ₹${ctx.parsed.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} (${((ctx.parsed/firstInc)*100).toFixed(2)}%)` } } }
+            }
+          });
+
+        } catch (err) {
+          out.innerHTML += '<div class="warn-banner">⚠️ Charts could not be loaded. Data table is still available above.</div>';
+        }
+      }, 100);
+    }
+  </script>
+</body>
+</html>
