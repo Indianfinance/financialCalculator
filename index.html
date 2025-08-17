@@ -1432,14 +1432,29 @@
       calculateSIP();
     });
   </script>
+ <!-- Place before </body> -->
 <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js")
-      .then(reg => console.log("Service Worker registered:", reg))
-      .catch(err => console.log("Service Worker registration failed:", err));
-  }
-</script>
+// Init on load
+document.addEventListener('DOMContentLoaded', () => {
+  Chart.defaults.color = 'white';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.1)';
+  Chart.defaults.backgroundColor = 'rgba(255,255,255,0.1)';
+  calculateSIP();
+});
 
+// Service worker registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+      // Registration successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(error) {
+      // Registration failed
+      console.log('ServiceWorker registration failed:', error);
+    });
+  });
+}
+</script>
 </body>
 </html>
 
